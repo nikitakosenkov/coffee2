@@ -132,10 +132,11 @@ class Sec(QWidget, Ui_Form):
     def chn(self):
         con = sqlite3.connect('coffee.sqlite')
         cur = con.cursor()
+        q = len(cur.execute("SELECT * FROM sorts").fetchall())
         qqq = cur.execute("""INSERT INTO sorts
         VALUES
         ( ? , ? , ? , ? , ? , ? , ? )""",
-                          (1, self.lineEdit_2.text(), self.lineEdit_3.text(), self.lineEdit_4.text(),
+                          (q + 1, self.lineEdit_2.text(), self.lineEdit_3.text(), self.lineEdit_4.text(),
                            self.lineEdit_5.text(), int(self.lineEdit_6.text()), int(self.lineEdit_7.text())))
         con.commit()
         cur.close()
@@ -143,11 +144,17 @@ class Sec(QWidget, Ui_Form):
     def ad(self):
         con = sqlite3.connect('coffee.sqlite')
         cur = con.cursor()
-        cur.execute(f"""UPDATE sorts
-                        SET title = {self.lineEdit_2.text()}, fry = {self.lineEdit_3.text()}, 
-                        molotyi zerno = {self.lineEdit_4.text()}, description = {self.lineEdit_5.text()}, 
-                        price = {int(self.lineEdit_6.text())}, amount = {int(self.lineEdit_7.text())}
-                        WHERE id = {int(self.lineEdit)}""")
+        print(int(self.lineEdit.text()))
+        cur.execute("""UPDATE sorts
+                        SET title = ? , fry = ? , 
+                        zerno = ? , description = ? , 
+                        price = ? , amount = ?
+                        WHERE id = ? """,
+                    (self.lineEdit_2.text(), self.lineEdit_3.text(),
+                     self.lineEdit_4.text(), self.lineEdit_5.text(),
+                     int(self.lineEdit_6.text()), int(self.lineEdit_7.text()), int(self.lineEdit.text())))
+        con.commit()
+        cur.close()
 
 
 class MyWidget(QMainWindow, Ui_MainWindow):
